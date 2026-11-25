@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="su">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Jawara Basa Sunda X</title>
+<style>
+@import url('https://googleapis.com');
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:100%;min-height:100vh;font-family:'Plus Jakarta Sans','Noto Sans Sundanese',sans-serif;background:#fefae0;color:#1f2937;display:flex;justify-content:center;align-items:center;padding:16px}
+.box{width:100%;max-width:740px;margin:auto;background:#fff;border-radius:18px;box-shadow:0 15px 30px rgba(0,0,0,.1);overflow:hidden;border:2px solid #d4a373}
+.top{background:#1b4332;color:#fff;padding:14px 20px;display:flex;justify-content:space-between;align-items:center;font-weight:800}
+.bar{height:8px;background:#e5e7eb}.fill{height:100%;background:#d97706;width:0;transition:.3s}
+.scr{padding:24px;display:none}.scr.act{display:block}
+.ilus{background:#f8fafc;border:2px dashed #cbd5e1;border-radius:12px;padding:14px;margin:12px 0;text-align:center}
+.aks{font-family:'Noto Sans Sundanese',sans-serif;font-size:2rem;color:#1b4332;font-weight:700}
+.qtxt{font-size:1.08rem;font-weight:700;margin-bottom:14px;line-height:1.5}
+.grid{display:grid;gap:9px}
+.opt{padding:12px 16px;border:2px solid #e5e7eb;border-radius:10px;background:#fff;text-align:left;font:600 .95rem inherit;cursor:pointer}
+.opt:hover:not(:disabled){border-color:#d97706;background:#fffbeb}
+.opt.sel{border-color:#2563eb;background:#eff6ff}
+.opt.ok{border-color:#16a34a;background:#dcfce7;color:#14532d}
+.opt.no{border-color:#dc2626;background:#fee2e2;color:#7f1d1d}
+.mgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.mitem{padding:11px;border:2px solid #e5e7eb;border-radius:9px;font-size:.88rem;font-weight:600;cursor:pointer}
+.mitem.act{border-color:#d97706;background:#fef3c7}
+.mitem.done{border-color:#16a34a;background:#dcfce7;opacity:.8;cursor:default}
+.btn{background:#d97706;color:#fff;border:0;padding:12px 22px;border-radius:10px;font:700 .95rem inherit;cursor:pointer;margin-top:14px}
+.fb{margin-top:14px;padding:12px;border-radius:10px;font-size:.9rem;display:none}
+.fb.ok{display:block;background:#dcfce7;color:#14532d}.fb.no{display:block;background:#fee2e2;color:#7f1d1d}
+@media(max-width:600px){.mgrid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="box">
+  <div class="top"><span>🛡️ Jawara Basa Sunda X</span><span id="hud">❤️❤️❤️❤️❤️ | ⭐ 0</span></div>
+  <div class="bar"><div class="fill" id="fill"></div></div>
+  <div class="scr act" id="s1" style="text-align:center">
+    <div style="font-size:3rem">⚔️📜✍️</div>
+    <h2 style="color:#1b4332;margin:10px 0">Petualangan Kisi-Kisi Basa Sunda</h2>
+    <p style="color:#4b5563;margin-bottom:16px">Latihan 25 Soal Lengkap (Niskala Wastu Kancana, Babad, Ki Sayang Hawu, Aksara & Rarangkén)</p>
+    <button class="btn" onclick="start()">🚀 Mimitian Maén</button>
+  </div>
+  <div class="scr" id="s2">
+    <div style="display:flex;justify-content:space-between;font-size:.82rem;font-weight:700;color:#92400e"><span id="qtop"></span><span id="qcnt"></span></div>
+    <div class="ilus" id="ilus"></div>
+    <div class="qtxt" id="qtxt"></div>
+    <div id="ans"></div>
+    <div class="fb" id="fb"></div>
+    <div style="display:flex;justify-content:space-between">
+      <button class="btn" id="bsub" onclick="cek()" style="display:none">✅ Pariksa</button>
+      <button class="btn" id="bnxt" onclick="nxt()" style="display:none;margin-left:auto">Salajengna ➡️</button>
+    </div>
+  </div>
+  <div class="scr" id="s3" style="text-align:center">
+    <div style="font-size:3.5rem">🏆</div>
+    <h2 id="rtit" style="color:#1b4332;margin:8px 0"></h2>
+    <h1 id="rscr" style="color:#d97706;margin:8px 0"></h1>
+    <p id="rsts"></p>
+    <button class="btn" onclick="start()">🔄 Maén Deui</button>
+  </div>
+</div>
+<script>
+const I={
+  kw:`<svg width="200" height="65"><rect width="200" height="65" rx="8" fill="#ecfdf5"/><text x="100" y="30" text-anchor="middle" fill="#065f46" font-weight="bold" font-size="13">🏰 KARATON KAWALI</text><text x="100" y="48" text-anchor="middle" fill="#047857" font-size="11">Niskala Wastu Kancana</text></svg>`,
+  bb:`<svg width="200" height="65"><rect width="200" height="65" rx="8" fill="#fef3c7"/><text x="100" y="30" text-anchor="middle" fill="#92400e" font-weight="bold" font-size="13">📜 NASKAH BABAD</text><text x="100" y="48" text-anchor="middle" fill="#b45309" font-size="11">Sajarah & Ajén Moral</text></svg>`,
+  sh:`<svg width="200" height="65"><rect width="200" height="65" rx="8" fill="#fee2e2"/><text x="100" y="30" text-anchor="middle" fill="#991b1b" font-weight="bold" font-size="13">⚔️ KI SAYANG HAWU</text><text x="100" y="48" text-anchor="middle" fill="#b91c1c" font-size="11">Sumedang Larang</text></svg>`,
+  ak:(t,c)=>`<div class="aks">${t}</div><small style="color:#475569">${c}</small>`
+};
+const Q=[
+{t:"Niskala Wastu Kancana",y:"pg",i:I.kw,q:"1. Tujuan utama perkawinan Niskala Wastu Kancana jeung Mayangsari nyaéta...",o:["Nguatkeun tali duduluran & ngahijikeun kakawasaan sangkan nagara tengtrem","Naklukkeun Karajaan Majapahit","Mindahkeun puseur dayeuh ka basisir","Nyingkahan serangan ti Sumatra"],a:0,e:"Perkawinan ieu nguatkeun tali kulawarga karajaan sangkan stabil jeung tengtrem."},
+{t:"Niskala Wastu Kancana",y:"pg",i:I.kw,q:"2. Pangaruh salametna Wastu Kancana kana Karajaan Kawali nyaéta...",o:["Karajaan langsung bubar","Neruskeun tahta sarta mawa Kawali kana mangsa kaemasan 104 taun","Pindah adat karuhun","Teu aya pangaruh nanaon"],a:1,e:"Wastu Kancana mingpin Kawali kalawan adil jeung tengtrem salila 104 taun."},
+{t:"Carita Babad",y:"pg",i:I.bb,q:"3. Kecap 'babad' hartina muka leuweung, hubunganana jeung sajarah daérah nyaéta...",o:["Ngan nyaritakeun tatanén","Ngagambarkeun mimiti ngadegna atawa dibuka hiji wewengkon jadi lembur/nagara","Ditulis dina kulit kai","Élmu tatangkalan"],a:1,e:"Babad nyaritakeun asal-usul dibuka jeung ngadegna hiji wewengkon/karajaan."},
+{t:"Carita Babad",y:"pg",i:I.bb,q:"4. Fungsi unsur pamohalan (mitos) dina carita babad nyaéta...",o:["Nipu nu maca","Nambahan ajén kasaktian, kawibawaan tokoh, jeung daya tarik carita","Ngagantikeun sakabéh fakta","Ngurangan ajén moral"],a:1,e:"Unsur pamohalan dipaké pikeun ngagambarkeun kawibawaan jeung kaagungan tokoh."},
+{t:"Carita Babad",y:"pg",i:I.bb,q:"5. Sikep anu merenah dina maca carita babad nyaéta...",o:["Percaya kana sakabéh hal gaib tanpa dipikir","Nolak sakabéh eusina","Maca kalawan kritis: ngabédakeun fakta sajarah jeung mitos sarta nyokot hikmahna","Maca bagian perangna wungkul"],a:2,e:"Urang kudu kritis milah unsur sajarah jeung mitos sarta metik ajén moralna."},
+{t:"Carita Babad",y:"pg",i:I.bb,q:"6. Kaunggulan jeung mangpaat carita babad pikeun masarakat nyaéta...",o:["Ngawanohkeun jati diri, asal-usul lemah cai, jeung rasa reueus kana budaya","Ngajarkeun élmu kanuragan","Ngarasa punjul ti batur","Ngagantikeun buku sajarah nasional"],a:0,e:"Carita babad ngajaga jati diri bangsa jeung kearifan lokal."},
+{t:"Aksara Sunda",y:"pg",i:I.ak("ᮃᮊ᮪ᮞᮛ ᮞᮥᮔ᮪ᮓ","Aksara Sunda"),q:"7. Pentingna ngamumulé aksara Sunda nyaéta...",o:["Ngaleungitkeun aksara Latén","Sabab mangrupa idéntitas budaya jeung warisan karuhun nu ulah tumpur","Ngarah gampang maca basa asing","Ngan keur surat resmi"],a:1,e:"Aksara Sunda téh jati diri jeung bukti luhurna peradaban Sunda."},
+{t:"Rarangkén",y:"pg",i:I.ak("ᮊ + ᮪ = ᮊ᮪","Pamaéh"),q:"8. Fungsi pamaéh ( ᮪ ) dina aksara Sunda nyaéta...",o:["Ngarobah /a/ jadi /i/","Nambahan /ng/","Ngaleungitkeun sora vokal /a/ dina aksara ngalagena","Ngarobah /a/ jadi /u/"],a:2,e:"Pamaéh maéhan sora vokal /a/ jadi konsonan mandiri."},
+{t:"Aksara Sunda",y:"pg",i:I.ak("URANG SUNDA","Tulis dina Aksara Sunda"),q:"9. Panulisan kecap 'URANG SUNDA' anu bener nyaéta...",o:["ᮅᮛᮀ ᮞᮥᮔ᮪ᮓ","ᮅᮛᮍ ᮞᮥᮔᮓ","ᮇᮛᮀ ᮞᮧᮔ᮪ᮓ","ᮅᮛᮀ ᮞᮤᮔ᮪ᮓ"],a:0,e:"ᮅ (U) + ᮛᮀ (rang) + ᮞᮥ (su) + ᮔ᮪ (n) + ᮓ (da)."},
+{t:"Rarangkén",y:"pg",i:I.ak("ᮊ + ᮀ = ᮊᮀ","Sora tungtung /ng/"),q:"10. Rarangkén pikeun nambahan sora tungtung /ng/ nyaéta...",o:["Panglayar ( ᮁ )","Panyecek ( ᮀ )","Pangwisad ( ᮂ )","Panyuku ( ᮥ )"],a:1,e:"Panyecek ( ᮀ ) di luhur aksara nambahan sora /ng/."},
+{t:"Rarangkén (PGK)",y:"cx",i:I.ak("ᮊᮤ & ᮊᮀ","Pilih 2 Jawaban Bener"),q:"11. Pilih DUA fungsi panghulu jeung panyecek anu bener!",o:["Panghulu ( ᮤ ) ngarobah /a/ jadi /i/","Panyecek ( ᮀ ) nambahan sora /ng/ di tungtung","Panghulu di handap ngahasilkeun /u/","Panyecek ngaleungitkeun sora /a/"],a:new Array(0,1),e:"Panghulu = /i/, Panyecek = /ng/."},
+{t:"Rarangkén (PGK)",y:"cx",i:I.ak("ᮊᮀ & ᮊ᮪","Pilih 2 Jawaban Bener"),q:"12. Pilih DUA fungsi panyecek jeung pamaéh anu bener!",o:["Pamaéh ( ᮪ ) di katuhu ngaleungitkeun sora /a/","Panyecek ( ᮀ ) di luhur nambahan sora /ng/","Pamaéh bisa dihijikeun jeung panyecek","Panyecek nambahan sora /r/"],a:new Array(0,1),e:"Pamaéh ngaleungitkeun /a/, panyecek nambahan /ng/."},
+{t:"Carita Babad (PGK)",y:"cx",i:I.bb,q:"13. Pilih DUA ajén jeung mangpaat carita babad!",o:["Numuwuhkeun cinta lemah cai & sajarah lokal","Méré tuladan kapamingpinan karuhun","Sajarah teu butuh fakta","Ninggalkeun téknologi"],a:new Array(0,1),e:"Carita babad ngandung ajén patriotisme jeung kapamingpinan."},
+{t:"Aksara Sunda (PGK)",y:"cx",i:I.ak("|ᮓ᮪ᮛ. ᮃᮍ᮪ᮌ|","Gelar & Tanda Baca"),q:"14. Pilih DUA aturan panulisan gelar jeung tanda baca!",o:["Tanda baca ngadopsi tanda baca Latén (titik, koma)","Gelar ditulis luyu jeung unina maké pamaéh","Teu meunang maké titik","Maké aksara kapital"],a:new Array(0,1),e:"Aksara Sunda maké tanda baca Latén jeung gelar ditulis maké pamaéh."},
+{t:"Rarangkén (PGK)",y:"cx",i:I.ak("ᮊᮩ | ᮊᮦ | ᮊᮧ","Wangun Rarangkén"),q:"15. Pilih DUA analisis wangun rarangkén anu bener!",o:["Pamepet ( ᮩ ) di luhur = sora /eu/","Panéléng ( ᮦ ) di kénca = sora /é/","Panolong di handap = /o/","Panyuku di katuhu = /u/"],a:new Array(0,1),e:"Pamepet di luhur (/eu/) jeung panéléng di kénca (/é/)."},
+{t:"Carita Babad (B/S)",y:"tf",i:I.bb,q:"16. Carita babad ngahijikeun unsur sajarah, mitos, jeung ajén moral pikeun atikan budi pekerti.",a:true,e:"BENER! Carita babad miboga ajén moral sanajan aya unsur mitosna."},
+{t:"Carita Babad (B/S)",y:"tf",i:I.bb,q:"17. Unsur intrinsik dina babad teu bisa dipaké pikeun nganalisis ajén kapamingpinan tokoh.",a:false,e:"SALAH! Tina watek palaku jeung galur urang bisa nganalisis kapamingpinanana."},
+{t:"Aksara Sunda (B/S)",y:"tf",i:I.ak("ᮊ → ᮊᮤ → ᮊᮀ → ᮊ᮪","Bédana Fungsi"),q:"18. Ngalagena sorana /a/, panghulu jadi /i/, panyecek nambahan /ng/, pamaéh maéhan vokal.",a:true,e:"BENER! Éta pisan bédana fungsi opat komponén éta."},
+{t:"Aksara Sunda (B/S)",y:"tf",i:I.ak("ᮜᮒᮤᮠᮔ᮪ ᮙᮎ","Latihan Maca & Nulis"),q:"19. Latihan maca jeung nulis aksara Sunda teu penting sabab geus aya tarjamahan otomatis.",a:false,e:"SALAH! Latihan penting sangkan paham aturan rarangkén kalawan bener."},
+{t:"Aksara Sunda (B/S)",y:"tf",i:I.ak("ᮏᮜᮔ᮪ ᮞᮤᮜᮤᮝᮍᮤ","Ngaran Jalan"),q:"20. Panulisan ngaran jalan maké aksara Sunda kudu luyu jeung éjahan sarta rarangkén baku.",a:true,e:"BENER! Sangkan teu salah baca jeung jadi edukasi publik."},
+{t:"Babad Galuh",y:"mt",i:I.bb,q:"21. Jodohkeun konsép Babad Galuh di kénca jeung kateranganana!",p:[{l:"Pentingna ngalestarikeun Babad Galuh",r:"Ngajaga jati diri & sajarah Tatar Galuh"},{l:"Pangaruh ajén kapamingpinan",r:"Jadi tuladan kawijaksanaan di masarakat"},{l:"Akibat teu mikawanoh babad",r:"Leungitna rasa reueus kana budaya"}],e:"Babad Galuh ngajaga jati diri jeung méré tuladan kapamingpinan."},
+{t:"Aksara Sunda",y:"mt",i:I.ak("ᮃ | ᮊ | ᮤ | ᮥ","Komponén Aksara"),q:"22. Jodohkeun komponén aksara Sunda jeung fungsina!",p:[{l:"Panghulu ( ᮤ )",r:"Ngarobah sora /a/ jadi /i/"},{l:"Swara vs Ngalagena",r:"Swara vokal mandiri, ngalagena konsonan + /a/"},{l:"Panyuku ( ᮥ )",r:"Ngahasilkeun sora vokal /u/"}],e:"Panghulu = /i/, Panyuku = /u/."},
+{t:"Ngamumulé Aksara",y:"mt",i:I.ak("ᮍᮙᮥᮙᮥᮜᮦ","Ngamumulé"),q:"23. Jodohkeun upaya ngamumulé aksara Sunda!",p:[{l:"Cara ngawanohkeun aksara",r:"Plang ngaran jalan & kontén média sosial"},{l:"Kagiatan sakola",r:"Lomba kaligrafi & pembiasaan nulis"},{l:"Warisan karuhun",r:"Naskah kuno, aksara, jeung basa indung"}],e:"Ngamumulé aksara bisa ti sakola nepi ka ruang publik."},
+{t:"Ki Sayang Hawu",y:"mt",i:I.sh,q:"24. Jodohkeun unsur intrinsik carita Ki Sayang Hawu!",p:[{l:"Téma utama carita",r:"Kasatiaan & kawani prajurit ka nagara"},{l:"Galur kajadian",r:"Galur maju (diutus perang nepi ka mulang)"},{l:"Puseur sawangan",r:"Jalma katilu sarwa nyaho"}],e:"Ki Sayang Hawu miboga téma kasatiaan kalawan galur maju."},
+{t:"Rarangkén",y:"mt",i:I.ak("ᮊᮩ | ᮊᮦ | ᮊᮤ","Rarangkén Vokal"),q:"25. Jodohkeun rarangkén jeung sora vokalna!",p:[{l:"Pamepet ( ᮩ )",r:"Di luhur, ngarobah /a/ jadi /eu/"},{l:"Panéléng ( ᮦ )",r:"Di kénca, ngarobah /a/ jadi /é/"},{l:"Panghulu ( ᮤ )",r:"Di luhur, ngarobah /a/ jadi /i/"}],e:"Pamepet=/eu/, Panéléng=/é/, Panghulu=/i/."}
+];
+
+let idx=0,scr=0,liv=5,okc=0,selC=[],selT=null,mL=null,mC=0;
+const $=id=>document.getElementById(id);
+function show(id){document.querySelectorAll('.scr').forEach(s=>s.classList.remove('act'));$(id).classList.add('act');}
+function hud(){$('hud').textContent=`${'❤️'.repeat(liv)}${'🖤'.repeat(5-liv)} | ⭐ ${scr}`;$('fill').style.width=`${(idx/Q.length)*100}%`;}
+function start(){idx=0;scr=0;liv=5;okc=0;hud();show('s2');load();}
+function load(){
+  const q=Q[idx];selC=[];selT=null;mL=null;mC=0;
+  $('qtop').textContent='📚 '+q.t;$('qcnt').textContent=`Soal ${idx+1}/${Q.length}`;
+  $('ilus').innerHTML=q.i;$('qtxt').textContent=q.q;
+  $('fb').className='fb';$('bsub').style.display='none';$('bnxt').style.display='none';
+  const a=$('ans');a.innerHTML='';
+  if(q.y==='pg'){
+    const g=document.createElement('div');g.className='grid';
+    q.o.forEach((t,k)=>{
+      const b=document.createElement('button');b.className='opt';b.textContent=`${['A','B','C','D'][k]}. ${t}`;
+      b.onclick=()=>{g.querySelectorAll('.opt').forEach(x=>x.disabled=true);const ok=k===q.a;b.classList.add(ok?'ok':'no');if(!ok)g.children[q.a].classList.add('ok');done(ok,q.e);};
+      g.appendChild(b);
+    });a.appendChild(g);
+  }else if(q.y==='cx'){
+    $('bsub').style.display='inline-block';const g=document.createElement('div');g.className='grid';
+    q.o.forEach((t,k)=>{
+      const b=document.createElement('button');b.className='opt';b.textContent='⬜ '+t;
+      b.onclick=()=>{if(b.disabled)return;if(selC.includes(k)){selC=selC.filter(x=>x!==k);b.classList.remove('sel');b.textContent='⬜ '+t;}else{selC.push(k);b.classList.add('sel');b.textContent='☑️ '+t;}};
+      g.appendChild(b);
+    });a.appendChild(g);
+  }else if(q.y==='tf'){
+    $('bsub').style.display='inline-block';const g=document.createElement('div');g.className='grid';
+    [['✅ BENER',true],['❌ SALAH',false]].forEach(([lbl,val])=>{
+      const b=document.createElement('button');b.className='opt';b.textContent=lbl;
+      b.onclick=()=>{if(b.disabled)return;selT=val;g.querySelectorAll('.opt').forEach(x=>x.classList.remove('sel'));b.classList.add('sel');};
+      g.appendChild(b);
+    });a.appendChild(g);
+  }else if(q.y==='mt'){
+    const mg=document.createElement('div');mg.className='mgrid';
+    const c1=document.createElement('div');c1.className='grid';const c2=document.createElement('div');c2.className='grid';
+    q.p.forEach((pr,k)=>{
+      const d=document.createElement('div');d.className='mitem';d.textContent=pr.l;
+      d.onclick=()=>{if(d.classList.contains('done'))return;c1.querySelectorAll('.mitem').forEach(x=>x.classList.remove('act'));d.classList.add('act');mL={el:d,id:k};};
+      c1.appendChild(d);
+    });
+    q.p.map((pr,k)=>({txt:pr.r,id:k})).sort(()=>Math.random()-.5).forEach(it=>{
+      const d=document.createElement('div');d.className='mitem';d.textContent=it.txt;
+      d.onclick=()=>{if(d.classList.contains('done')||!mL)return;if(mL.id===it.id){mL.el.className='mitem done';d.className='mitem done';mL=null;mC++;if(mC===q.p.length)done(true,q.e);}else{liv=Math.max(0,liv-1);hud();d.style.borderColor='#dc2626';setTimeout(()=>d.style.borderColor='',400);if(liv===0)done(false,'Nyawa béak! '+q.e);}};
+      c2.appendChild(d);
+    });mg.append(c1,c2);a.appendChild(mg);
+  }hud();
+}
+function cek(){
+  const q=Q[idx],bs=document.querySelectorAll('#ans .opt');
+  if(q.y==='cx'){
+    if(!selC.length)return alert('Pilih jawaban heula!');
+    bs.forEach((b,k)=>{b.disabled=true;if(q.a.includes(k))b.classList.add('ok');else if(selC.includes(k))b.classList.add('no');});
+    done(selC.sort().join()===q.a.sort().join(),q.e);
+  }else if(q.y==='tf'){
+    if(selT===null)return alert('Pilih BENER atawa SALAH!');
+    bs.forEach(b=>b.disabled=true);
+    bs[q.a?0:1].classList.add('ok');if(selT!==q.a)bs[selT?0:1].classList.add('no');
+    done(selT===q.a,q.e);
+  }
+}
+function done(ok,exp){
+  $('bsub').style.display='none';const f=$('fb');
+  if(ok){okc++;scr+=40;f.className='fb ok';f.innerHTML='<b>🎉 Leres! (+40)</b><br>'+exp;}
+  else{liv=Math.max(0,liv-1);f.className='fb no';f.innerHTML='<b>❌ Kirang pas!</b><br>'+exp;}
+  hud();$('bnxt').style.display='inline-block';$('bnxt').textContent=(liv===0||idx===Q.length-1)?'🏁 Hasil Ahir':'Salajengna ➡️';
+}
+function nxt(){if(liv===0||idx>=Q.length-1){$('fill').style.width='100%';show('s3');$('rtit').textContent=liv===0?'Coba Deui, Ulah Nyerah!':'Wilujeng! Rengse!';$('rscr').textContent=scr+' Poin';$('rsts').textContent=`Bener ${okc} tina ${Q.length} soal`;}else{idx++;load();}}
+</script>
+</body>
+</html>
